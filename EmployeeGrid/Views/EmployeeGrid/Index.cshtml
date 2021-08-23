@@ -1,0 +1,105 @@
+﻿@using GridMvc
+@using GridShared.Sorting
+
+@addTagHelper *, GridMvc
+
+@model EmployeeGrid.Controllers.EmployeeGridController
+
+@{
+    ViewData["Title"] = "Employee Grid";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form enctype="multipart/form-data" method="post">
+    <dl>
+        <dd>
+            <input asp-for="FileUpload.FormFile" type="file">
+            <span asp-validation-for="FileUpload.FormFile" style="color:red"></span>
+            <p><b>Note: File size cannot be larger than @ViewData[nameof(Model.FileSizeLimitInMegabytes)] megabytes</b></p>
+        </dd>
+    </dl>
+
+    <input asp-action="UploadSingleFile" class="btn-primary" type="submit" value="Upload" />
+</form>
+
+@if (ViewData[nameof(Model.SuccessfullyAddedRecords)] != null)
+{
+    <p style="color:forestgreen">Successfully added @ViewData[nameof(Model.SuccessfullyAddedRecords)] rows!</p>
+}
+
+
+@if (Model != null && Model.Employees != null)
+{
+    @await Html.Grid(Model.Employees).Columns(columnCollection =>
+{
+    columnCollection.Add(x => x.PayrollNumber).Titled("Payroll number").Sortable(true).Filterable(true).Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.PayrollNumber), x.PayrollNumber)
+    );
+
+    columnCollection.Add(x => x.FirstName).Titled("First name").Sortable(true).Filterable(true).Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.FirstName), x.FirstName)
+    );
+
+    columnCollection.Add(x => x.LastName).Titled("Last name").Sortable(true).Filterable(true)
+    .SortInitialDirection(GridSortDirection.Ascending).Encoded(false).Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.LastName), x.LastName)
+    );
+
+    columnCollection.Add(x => x.Birthday).Titled("Birthday (year, month, day)").Sortable(true).Encoded(false).Sanitized(false)
+    .RenderValueAs(x => {
+        var recordValue = x.Birthday.ToString(Model.MANDATORY_HTML_TIME_FORMAT);
+        // that format is mandatory for <input type="date"> to work correctly
+        return Model.GetDefaultCellView(x.Id, nameof(x.Birthday), recordValue, Model.DATE);
+    });
+
+    columnCollection.Add(x => x.Telephone).Titled("Telephone").Sortable(true).Filterable(true).Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.Telephone), x.Telephone, Model.NUMBER)
+    );
+
+    columnCollection.Add(x => x.Mobile).Titled("Mobile").Sortable(true).Filterable(true).Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.Mobile), x.Mobile, Model.NUMBER)
+    );
+
+    columnCollection.Add(x => x.Address).Titled("Address").Sortable(true).Filterable(true).Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.Address), x.Address)
+    );
+
+    columnCollection.Add(x => x.SecondAdress).Titled("Address2").Sortable(true).Filterable(true).Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.SecondAdress), x.SecondAdress)
+    );
+
+    columnCollection.Add(x => x.Postcode).Titled("Postcode").Sortable(true).Filterable(true).Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.Postcode), x.Postcode)
+    );
+
+    columnCollection.Add(x => x.EmailHome).Titled("Email").Sortable(true).Filterable(true)
+    .Encoded(false).Sanitized(false)
+    .RenderValueAs(x =>
+        Model.GetDefaultCellView(x.Id, nameof(x.EmailHome), x.EmailHome, Model.EMAIL));
+
+    columnCollection.Add(x => x.StartDate).Titled("Start date (year, month, day)").Sortable(true).Encoded(false)
+    .Sanitized(false)
+    .RenderValueAs(x => {
+        var recordValue = x.StartDate.ToString(Model.MANDATORY_HTML_TIME_FORMAT);
+        // that format is mandatory for <input type="date"> to work correctly
+        return Model.GetDefaultCellView(x.Id, nameof(x.StartDate), recordValue, Model.DATE);
+    });
+
+}).WithPaging(2).ChangePageSize(true).Searchable(true).RenderAsync()
+}
