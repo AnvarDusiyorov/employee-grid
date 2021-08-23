@@ -51,7 +51,7 @@ To see the project in action do the following steps:
   * If you forget to provide CSV file, you will see:
   ![no-file-provided-image]
 
-  * If you provide valid CSV file (by valid I mean any CSV file with header like in [this][rolemodel-csv-file]), you will see:
+  * If you provide valid CSV file (by "valid" I mean any CSV file with headers like in [this][rolemodel-csv-file]), you will see:
   ![valid-file-provided-image]
   
   * After pressing "Upload" button, you will see something like this:
